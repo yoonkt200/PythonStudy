@@ -14,7 +14,7 @@ HELLO_COMMAND = ["hi", "hello", "하이", "ㅎㅇ", "안녕", "안녕하세요",
 HELLO_RETURN = ["hi", "hello", "하이", "ㅎㅇ", "안녕", "안녕하세요", "안뇽", "ㅇㅇ", "왜?", "OK퀴즈 풀래?", "ㅇㅋ"]
 START_TEXT = ["quiz", "game", "게임", "OX", "ox", "퀴즈", "내봐", "문제"]
 
-END_TEXT =
+# END_TEXT =
 
 # instantiate Slack & Twilio clients
 slack_client = SlackClient('xoxb-207080265639-QdACLVqTI3U3xQdJl8MXYCsk')
