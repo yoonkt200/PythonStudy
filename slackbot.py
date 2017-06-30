@@ -4,14 +4,14 @@ from slackclient import SlackClient
 
 
 # starterbot's ID as an environment variable
-BOT_ID = os.environ.get("U632C7TJT")
+BOT_ID = "U632C7TJT"
 
 # constants
 AT_BOT = "<@" + BOT_ID + ">"
 EXAMPLE_COMMAND = "do"
 
 # instantiate Slack & Twilio clients
-slack_client = SlackClient(os.environ.get('xoxb-207080265639-42Nsl27M2iv6N2oYw3RXrXEL'))
+slack_client = SlackClient('xoxb-207080265639-42Nsl27M2iv6N2oYw3RXrXEL')
 
 
 def handle_command(command, channel):
