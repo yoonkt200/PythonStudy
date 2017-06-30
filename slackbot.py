@@ -28,11 +28,10 @@ def handle_command(command, channel):
     """
     response = "미안해요.. 반나절만에 만든거라 다른 말은 대답 못해요. OX퀴즈나 풀어봅시다!"
 
-    for word in command:
-        if word.lower() in HELLO_COMMAND:
-            response = random.choice(HELLO_RETURN)
-        elif word.lower() in START_TEXT:
-            response = "게임을 시작하지.."
+    if command in HELLO_COMMAND:
+        response = random.choice(HELLO_RETURN)
+    elif command in START_TEXT:
+        response = "게임을 시작하지.."
 
     slack_client.api_call("chat.postMessage", channel=channel,
                           text=response, as_user=True)
