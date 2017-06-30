@@ -13,13 +13,17 @@ AT_BOT = "<@" + BOT_ID + ">"
 HELLO_COMMAND = ["hi", "hello", "하이", "ㅎㅇ", "안녕", "안녕하세요", "안뇽"]
 HELLO_RETURN = ["hi", "hello", "하이", "ㅎㅇ", "안녕", "안녕하세요", "안뇽", "ㅇㅇ", "왜?", "OK퀴즈 풀래?", "ㅇㅋ"]
 START_TEXT = ["quiz", "game", "게임", "OX", "ox", "퀴즈", "내봐", "문제", "ㅇㅇ"]
+OX_ANSWER_O = "O"
+OX_ANSWER_X = "X"
+GENERAL_POSITIVE_ANSWER_TEXT = ["ㅇ", "ㅇㅇ", "응", "그래", "알았어", "해봐"]
+GENERAL_NEGATIVE_ANSWER_TEXT = ["ㄴ", "ㄴㄴ", "그만", "아니", "아니오", "아니요"]
 
 # END_TEXT =
 
 # instantiate Slack & Twilio clients
 slack_client = SlackClient('xoxb-207080265639-QdACLVqTI3U3xQdJl8MXYCsk')
 
-count = 1
+WAIT_ANSWER = False
 
 
 def handle_command(command, channel):
@@ -28,15 +32,21 @@ def handle_command(command, channel):
         are valid commands. If so, then acts on the commands. If not,
         returns back what it needs for clarification.
     """
-    global count
-    count += 1
 
     response = "미안해요.. 반나절만에 만든거라 다른 말은 대답 못해요. OX퀴즈나 풀어봅시다!" + str(count)
 
-    if command in HELLO_COMMAND:
-        response = random.choice(HELLO_RETURN)
-    elif command in START_TEXT:
-        response = "게임을 시작하지.."
+    if WAIT_ANSWER:
+         #if (check command contains answer text) return 정답여부
+         #else O나 X로 정답을 입력해주세요
+    else:
+        if command in HELLO_COMMAND:
+            response = random.choice(HELLO_RETURN)
+        elif command in START_TEXT:
+            response = "게임을 시작하지.."
+
+            ## 문제 내는 함수
+
+            WAIT_ANSWER = True
 
     slack_client.api_call("chat.postMessage", channel=channel,
                           text=response, as_user=True)
