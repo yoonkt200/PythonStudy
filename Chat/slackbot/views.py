@@ -2,6 +2,7 @@ import os
 import time
 import random
 import threading
+
 from slackclient import SlackClient
 
 from django.shortcuts import render
@@ -73,13 +74,13 @@ def handle_command(command, channel, uid):
         slack_client.api_call("chat.postMessage", channel=channel, text=response, as_user=True)
         return True
 
-                #     ## 문제 내는 함수
-                #     # check user quizNum and get quiz
-                #     # if has quiz
-                #     #       set user context answer_quiz
-                #     #       send quiz
-                #     # else no quiz
-                #     #       더이상 문제가 없어요 집에 돌아가세요
+    ## 문제 내는 함수
+    # check user quizNum and get quiz
+    # if has quiz
+    #       set user context answer_quiz
+    #       send quiz
+    # else no quiz
+    #       더이상 문제가 없어요 집에 돌아가세요
 
 
 def parse_slack_output(slack_rtm_output):
