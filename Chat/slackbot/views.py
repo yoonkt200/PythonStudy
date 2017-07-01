@@ -1,8 +1,9 @@
-# -*- coding:utf-8 -*-
 import os
 import time
 import random
 from slackclient import SlackClient
+
+from django.shortcuts import render
 
 
 # starterbot's ID as an environment variable
@@ -68,7 +69,7 @@ def parse_slack_output(slack_rtm_output):
     return None, None
 
 
-if __name__ == "__main__":
+def slack_bot_starter():
     READ_WEBSOCKET_DELAY = 1 # 1 second delay between reading from firehose
     if slack_client.rtm_connect():
         print("StarterBot connected and running!")
@@ -79,3 +80,11 @@ if __name__ == "__main__":
             time.sleep(READ_WEBSOCKET_DELAY)
     else:
         print("Connection failed. Invalid Slack token or bot ID?")
+
+
+# Django - background must need linker view
+def Linker(request):
+    return render(request)
+
+# start slackbot on background
+slack_bot_starter()
