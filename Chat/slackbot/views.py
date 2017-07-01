@@ -43,7 +43,10 @@ def handle_command(command, channel):
     if command in HELLO_COMMAND:
         response = random.choice(HELLO_RETURN)
     elif command in START_TEXT:
-        response = "게임을 시작하지.."
+        response = "OX 퀴즈를 시작하겠습니다."
+        time.sleep(60)
+        slack_client.api_call("chat.postMessage", channel=channel,
+                              text=response, as_user=True)
 
         ## 문제 내는 함수
 
@@ -82,9 +85,9 @@ def slack_bot_starter():
         print("Connection failed. Invalid Slack token or bot ID?")
 
 
-# Django - background must need linker view
-def Linker(request):
-    return render(request)
-
-# start slackbot on background
-slack_bot_starter()
+# # Django - background must need linker view
+# def Linker(request):
+#     return render(request)
+#
+# # start slackbot on background
+# slack_bot_starter()

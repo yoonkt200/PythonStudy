@@ -1,3 +1,10 @@
 from django.contrib import admin
+from quiz.models import Quiz
 
-# Register your models here.
+
+class QuizAdmin(admin.ModelAdmin):
+    model = Quiz
+    list_display = ('quiz', 'answer', 'answer_info')
+
+
+admin.site.register(Quiz, QuizAdmin)

@@ -9,9 +9,10 @@ class TimeStampedModel(models.Model):
         abstract = True
 
 
-class User(TimeStampedModel):
+class Quiz(TimeStampedModel):
     quiz = models.TextField(default="")
     answer = models.CharField(max_length=200, default="")
+    answer_info = models.CharField(max_length=200, default="")
 
     def __str__(self):
         return self.quiz
