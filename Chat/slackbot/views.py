@@ -50,9 +50,8 @@ def handle_command(command, channel, uid):
 
     elif user.context == "wait_quiz":
         if command in GENERAL_POSITIVE_ANSWER_TEXT:
+            response = "다음 문제입니다." + "\n"
             # 문제내는 함수 (+ 다음 문제입니다.)
-            user.setContext("answer_quiz")
-            # response
         elif command in GENERAL_NEGATIVE_ANSWER_TEXT:
             user.setContext("normal")
             response = NEGATIVE_RETURN
@@ -67,7 +66,6 @@ def handle_command(command, channel, uid):
             response = HELLO_RETURN
         elif command in GENERAL_POSITIVE_ANSWER_TEXT:
             response = "OX 퀴즈를 시작하겠습니다." + "\n"
-
             # 문제내는 함수
         else:
             response = SORRY_RETURN
@@ -110,6 +108,7 @@ def slack_bot_starter():
 # Django background must need linker view
 def Linker(request):
     return render(request)
+
 
 # start slackbot on background
 t = threading.Thread(target=slack_bot_starter, args=())
