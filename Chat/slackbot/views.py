@@ -4,6 +4,7 @@ import random
 from slackclient import SlackClient
 
 from django.shortcuts import render
+from user.models import User
 
 
 # starterbot's ID as an environment variable
@@ -22,17 +23,21 @@ GENERAL_NEGATIVE_ANSWER_TEXT = ["ㄴ", "ㄴㄴ", "그만", "아니", "아니오"
 # END_TEXT =
 
 # instantiate Slack & Twilio clients
-slack_client = SlackClient('xoxb-207080265639-Ocwc4lEFYUq8QckQKYpVGfIu')
+slack_client = SlackClient('xoxb-207080265639-1NLwQZHGJSJavt4CxkbqUXke')
 
 WAIT_ANSWER = False
 
 
-def handle_command(command, channel):
+def handle_command(command, channel, uid):
     """
         Receives commands directed at the bot and determines if they
         are valid commands. If so, then acts on the commands. If not,
         returns back what it needs for clarification.
     """
+    user = User.checkUser(uid)
+    if not user:
+        user = User.createUser(uid)
+    print (user)
 
     response = "미안해요.. 반나절만에 만든거라 다른 말은 대답 못해요. OX퀴즈나 풀어봅시다!"
 
@@ -66,10 +71,8 @@ def parse_slack_output(slack_rtm_output):
     if output_list and len(output_list) > 0:
         for output in output_list:
             if output and 'text' in output and AT_BOT in output['text']:
-                # return text after the @ mention, whitespace removed
-                return output['text'].split(AT_BOT)[1].strip().lower(), \
-                       output['channel']
-    return None, None
+                return output['text'].split(AT_BOT)[1].strip().lower(), output['channel'], output['user']
+    return None, None, None
 
 
 def slack_bot_starter():
@@ -77,17 +80,18 @@ def slack_bot_starter():
     if slack_client.rtm_connect():
         print("StarterBot connected and running!")
         while True:
-            command, channel = parse_slack_output(slack_client.rtm_read())
-            if command and channel:
-                handle_command(command, channel)
+            read = slack_client.rtm_read()
+            command, channel, uid = parse_slack_output(read)
+            if command and channel and uid:
+                handle_command(command, channel, uid)
             time.sleep(READ_WEBSOCKET_DELAY)
     else:
         print("Connection failed. Invalid Slack token or bot ID?")
 
 
-# # Django - background must need linker view
-# def Linker(request):
-#     return render(request)
-#
-# # start slackbot on background
-# slack_bot_starter()
+# Django - background must need linker view
+def Linker(request):
+    return render(request)
+
+# start slackbot on background
+slack_bot_starter()

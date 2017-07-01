@@ -15,9 +15,9 @@ Including another URLconf
 """
 from django.conf.urls import url
 from django.contrib import admin
-# from slackbot.views import Linker
+from slackbot.views import Linker
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    # url(r'^backgounrd$', Linker),
+    url(r'^backgounrd$', Linker),
 ]
