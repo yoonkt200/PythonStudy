@@ -21,6 +21,10 @@ class User(TimeStampedModel):
         self.quizNum = self.quizNum + 1
         self.save()
 
+    def setContext(self, context):
+        self.context = context
+        self.save()
+
     @staticmethod
     def createUser(slackid):
         user = User.objects.create(slackid=slackid)

@@ -1,72 +1,90 @@
 import os
 import time
 import random
+import threading
 from slackclient import SlackClient
 
 from django.shortcuts import render
 from user.models import User
+from quiz.models import Quiz
 
 
-# starterbot's ID as an environment variable
+# starterbot's ID
 BOT_ID = "U632C7TJT"
 
 # constants
 AT_BOT = "<@" + BOT_ID + ">"
 HELLO_COMMAND = ["hi", "hello", "하이", "ㅎㅇ", "안녕", "안녕하세요", "안뇽"]
-HELLO_RETURN = ["hi", "hello", "하이", "ㅎㅇ", "안녕", "안녕하세요", "안뇽", "ㅇㅇ", "왜?", "OK퀴즈 풀래?", "ㅇㅋ"]
-START_TEXT = ["quiz", "game", "게임", "OX", "ox", "퀴즈", "내봐", "문제", "ㅇㅇ"]
-OX_ANSWER_O = "O"
-OX_ANSWER_X = "X"
+HELLO_RETURN = "안녕하세요, OX퀴즈 챗봇입니다. OX퀴즈 하시겠어요? 전 아직 다른 일은 못해요."
+NEGATIVE_RETURN = "유감이네요. 안녕히 가세요."
+SORRY_RETURN = "미안해요.. 반나절만에 만든거라 다른 말은 대답 못해요. OX퀴즈나 풀어봅시다!"
 GENERAL_POSITIVE_ANSWER_TEXT = ["ㅇ", "ㅇㅇ", "응", "그래", "알았어", "해봐"]
 GENERAL_NEGATIVE_ANSWER_TEXT = ["ㄴ", "ㄴㄴ", "그만", "아니", "아니오", "아니요"]
+OX_ANSWER_O = "O"
+OX_ANSWER_X = "X"
 
-# END_TEXT =
-
-# instantiate Slack & Twilio clients
+# Slack clients
 slack_client = SlackClient('xoxb-207080265639-1NLwQZHGJSJavt4CxkbqUXke')
-
-WAIT_ANSWER = False
 
 
 def handle_command(command, channel, uid):
-    """
-        Receives commands directed at the bot and determines if they
-        are valid commands. If so, then acts on the commands. If not,
-        returns back what it needs for clarification.
-    """
-    user = User.checkUser(uid)
-    if not user:
+
+    # user check for context
+    user = None
+    result = User.checkUser(uid)
+    if not result:
         user = User.createUser(uid)
-    print (user)
 
-    response = "미안해요.. 반나절만에 만든거라 다른 말은 대답 못해요. OX퀴즈나 풀어봅시다!"
+    # answer process
+    if user.context == "answer_quiz":
+        if command.lower() == "o":
+            result, quiz_info = Quiz.checkCorrectAnswer(user.quizNum, command)
+            user.nextQuiz()
+            user.setContext("wait_quiz")
+            response = result + "\n" + quiz_info + "\n" + "다음문제를 푸시겠습니까?"
+        else:
+            response = "O, X로 정답을 입력해 주세요."
 
-    # if WAIT_ANSWER:
-    #      #if (check command contains answer text) return 정답여부
-    #      #else O나 X로 정답을 입력해주세요
-    # else:
-    if command in HELLO_COMMAND:
-        response = random.choice(HELLO_RETURN)
-    elif command in START_TEXT:
-        response = "OX 퀴즈를 시작하겠습니다."
-        time.sleep(60)
-        slack_client.api_call("chat.postMessage", channel=channel,
-                              text=response, as_user=True)
+        slack_client.api_call("chat.postMessage", channel=channel, text=response, as_user=True)
+        return True
 
-        ## 문제 내는 함수
+    elif user.context == "wait_quiz":
+        if command in GENERAL_POSITIVE_ANSWER_TEXT:
+            # 문제내는 함수 (+ 다음 문제입니다.)
+            user.setContext("answer_quiz")
+            # response
+        elif command in GENERAL_NEGATIVE_ANSWER_TEXT:
+            user.setContext("normal")
+            response = NEGATIVE_RETURN
+        else:
+            response = SORRY_RETURN
 
-        WAIT_ANSWER = True
+        slack_client.api_call("chat.postMessage", channel=channel, text=response, as_user=True)
+        return True
 
-    slack_client.api_call("chat.postMessage", channel=channel,
-                          text=response, as_user=True)
+    else:
+        if command in HELLO_COMMAND:
+            response = HELLO_RETURN
+        elif command in GENERAL_POSITIVE_ANSWER_TEXT:
+            response = "OX 퀴즈를 시작하겠습니다." + "\n"
+
+            # 문제내는 함수
+        else:
+            response = SORRY_RETURN
+
+        slack_client.api_call("chat.postMessage", channel=channel, text=response, as_user=True)
+        return True
+
+                #     ## 문제 내는 함수
+                #     # check user quizNum and get quiz
+                #     # if has quiz
+                #     #       set user context answer_quiz
+                #     #       send quiz
+                #     # else no quiz
+                #     #       더이상 문제가 없어요 집에 돌아가세요
 
 
 def parse_slack_output(slack_rtm_output):
-    """
-        The Slack Real Time Messaging API is an events firehose.
-        this parsing function returns None unless a message is
-        directed at the Bot, based on its ID.
-    """
     output_list = slack_rtm_output
     if output_list and len(output_list) > 0:
         for output in output_list:
@@ -76,7 +94,7 @@ def parse_slack_output(slack_rtm_output):
 
 
 def slack_bot_starter():
-    READ_WEBSOCKET_DELAY = 1 # 1 second delay between reading from firehose
+    READ_WEBSOCKET_DELAY = 1
     if slack_client.rtm_connect():
         print("StarterBot connected and running!")
         while True:
@@ -89,9 +107,11 @@ def slack_bot_starter():
         print("Connection failed. Invalid Slack token or bot ID?")
 
 
-# Django - background must need linker view
+# Django background must need linker view
 def Linker(request):
     return render(request)
 
 # start slackbot on background
-slack_bot_starter()
+t = threading.Thread(target=slack_bot_starter, args=())
+t.daemon = True
+t.start()

@@ -16,3 +16,11 @@ class Quiz(TimeStampedModel):
 
     def __str__(self):
         return self.quiz
+
+    @staticmethod
+    def checkCorrectAnswer(quizNum, answer):
+        quiz = Quiz.objects.get(id=quizNum)
+        if quiz.answer == answer:
+            return "정답입니다.", quiz.answer_info
+        else:
+            return "틀렸습니다.", quiz.answer_info
