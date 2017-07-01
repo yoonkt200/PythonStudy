@@ -18,7 +18,7 @@ AT_BOT = "<@" + BOT_ID + ">"
 HELLO_COMMAND = ["hi", "hello", "하이", "ㅎㅇ", "안녕", "안녕하세요", "안뇽"]
 HELLO_RETURN = "안녕하세요, OX퀴즈 챗봇입니다. OX퀴즈 하시겠어요? 전 아직 다른 일은 못해요."
 NEGATIVE_RETURN = "유감이네요. 안녕히 가세요."
-SORRY_RETURN = "미안해요.. 반나절만에 만든거라 다른 말은 대답 못해요. OX퀴즈나 풀어봅시다!"
+SORRY_RETURN = "미안해요.. 급하게 만든거라 다른 말은 대답 못해요. OX퀴즈나 풀어봅시다!"
 GENERAL_POSITIVE_ANSWER_TEXT = ["ㅇ", "ㅇㅇ", "응", "그래", "알았어", "해봐"]
 GENERAL_NEGATIVE_ANSWER_TEXT = ["ㄴ", "ㄴㄴ", "그만", "아니", "아니오", "아니요"]
 OX_ANSWER_O = "O"
@@ -52,7 +52,7 @@ def handle_command(command, channel, uid):
     elif user.context == "wait_quiz":
         if command in GENERAL_POSITIVE_ANSWER_TEXT:
             response = "다음 문제입니다." + "\n"
-            # 문제내는 함수 (+ 다음 문제입니다.)
+            # 문제내는 함수
         elif command in GENERAL_NEGATIVE_ANSWER_TEXT:
             user.setContext("normal")
             response = NEGATIVE_RETURN
