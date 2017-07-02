@@ -11,7 +11,7 @@ from quiz.models import Quiz
 
 
 # starterbot's ID
-BOT_ID = os.environ.get("BOT_ID")
+BOT_ID = 'U632C7TJT'
 
 # constants
 AT_BOT = "<@" + BOT_ID + ">"
@@ -25,7 +25,7 @@ OX_ANSWER_O = "O"
 OX_ANSWER_X = "X"
 
 # Slack clients
-slack_client = SlackClient(os.environ.get('SLACK_BOT_TOKEN'))
+slack_client = SlackClient('xoxb-207080265639-bO124q1E3OmwgVEkzI0XsAWD')
 
 
 def handle_command(command, channel, uid):
