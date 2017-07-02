@@ -17,6 +17,10 @@ class User(TimeStampedModel):
     def __str__(self):
         return self.slackid
 
+    def setQuizNum(self, num):
+        self.quizNum = num
+        self.save()
+
     def nextQuiz(self):
         self.quizNum = self.quizNum + 1
         self.save()

@@ -25,7 +25,7 @@ OX_ANSWER_O = "O"
 OX_ANSWER_X = "X"
 
 # Slack clients
-slack_client = SlackClient('xoxb-207080265639-1NLwQZHGJSJavt4CxkbqUXke')
+slack_client = SlackClient('xoxb-207080265639-svARVTOlxQ4450Ezon86fTt4')
 
 
 def handle_command(command, channel, uid):
@@ -35,10 +35,12 @@ def handle_command(command, channel, uid):
     result = User.checkUser(uid)
     if not result:
         user = User.createUser(uid)
+    else:
+        user = result
 
     # answer process
     if user.context == "answer_quiz":
-        if command.lower() == "o":
+        if command.lower() == "o" or command.lower() == "x":
             result, quiz_info = Quiz.checkCorrectAnswer(user.quizNum, command)
             user.nextQuiz()
             user.setContext("wait_quiz")
@@ -51,8 +53,16 @@ def handle_command(command, channel, uid):
 
     elif user.context == "wait_quiz":
         if command in GENERAL_POSITIVE_ANSWER_TEXT:
-            response = "다음 문제입니다." + "\n"
-            # 문제내는 함수
+            quiz = Quiz.getQuiz(user.quizNum)
+            if quiz:
+                user.setContext("answer_quiz")
+                response = "다음 문제입니다." + "\n"
+                response = response + quiz.quiz
+            else:
+                user.setContext("normal")
+                user.setQuizNum(0)
+                response = "더이상 풀 문제가 없습니다."
+
         elif command in GENERAL_NEGATIVE_ANSWER_TEXT:
             user.setContext("normal")
             response = NEGATIVE_RETURN
@@ -66,21 +76,18 @@ def handle_command(command, channel, uid):
         if command in HELLO_COMMAND:
             response = HELLO_RETURN
         elif command in GENERAL_POSITIVE_ANSWER_TEXT:
-            response = "OX 퀴즈를 시작하겠습니다." + "\n"
-            # 문제내는 함수
+            quiz = Quiz.getQuiz(user.quizNum)
+            if quiz:
+                user.setContext("answer_quiz")
+                response = "OX 퀴즈를 시작하겠습니다." + "\n"
+                response = response + quiz.quiz
+            else:
+                response = "더이상 풀 문제가 없습니다."
         else:
             response = SORRY_RETURN
 
         slack_client.api_call("chat.postMessage", channel=channel, text=response, as_user=True)
         return True
-
-    ## 문제 내는 함수
-    # check user quizNum and get quiz
-    # if has quiz
-    #       set user context answer_quiz
-    #       send quiz
-    # else no quiz
-    #       더이상 문제가 없어요 집에 돌아가세요
 
 
 def parse_slack_output(slack_rtm_output):
