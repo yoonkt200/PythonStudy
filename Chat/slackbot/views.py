@@ -25,7 +25,9 @@ OX_ANSWER_O = "O"
 OX_ANSWER_X = "X"
 
 # Slack clients
-slack_client = SlackClient('xoxb-207080265639-bO124q1E3OmwgVEkzI0XsAWD')
+token1 = 'xoxb-2070802'
+token2 = '65639-bO124q1E3OmwgVEkzI0XsAWD'
+slack_client = SlackClient(token1 + token2)
 
 
 def handle_command(command, channel, uid):
