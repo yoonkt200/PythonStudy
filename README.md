@@ -1,25 +1,17 @@
-# 챗봇 스터디 자료
+## Auto chat API using python
+- This repository is really simple toy project, A short study of hackathon results.
+- Using Slack API, Now not available because it was on AWS instance.
+- Not a AI chatbot. just auto response to api.
+- Using django schema model, I implemented a simple User Context management function.
 
-------------------------------------------------------------
+## Use the chatbot
+- OX quiz chatbot.
+- Call @ox_bot, and input the text.
 
-- Slack API, Amazon EC2 server를 이용하여 간단한 챗봇을 구현하였습니다.
-
-- Instance 요금 관계로 챗봇은 7/4 까지만 열어두겠습니다.
-
-- 자연어처리는 시간상 넣지 못했고(미숙하기도 하여..), OX퀴즈에 관한 내용만 대화가 가능한 상태입니다.
-
-- 대신에 Django Model을 이용하여 간단한 User Context 관리 기능을 구현했습니다.
-
-- @ox_bot 을 호출하고 텍스트를 입력해야 반응합니다.
-
-> 명령어 
+> Command(in Korean) 
 >> hi, 안녕, 안녕하세요 등... -> 챗봇을 부릅니다.
 >> ㅇㅇ, ㅇ, 그래 등... -> 챗봇의 말에 대답합니다.
 >> ㄴㄴ, ㄴ, 아니 등... -> 챗봇의 말에 거절합니다.
 >> 문제에 대한 대답은 O,X로 해주시면 됩니다.
 
-- 문제는 약 10여개를 넣어놓았습니다.
-
-- 아직 초보자 수준이라 에러가 많이 납니다. 부족하지만 재밌게 봐주셨으면 좋겠습니다.
-
-> slack 주소 및 채널 : https://datalabtalk.slack.com/messages/C63JE1BAT/
+> slack URL & channel : https://datalabtalk.slack.com/messages/C63JE1BAT/
